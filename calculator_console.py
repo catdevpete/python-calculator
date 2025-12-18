@@ -1,38 +1,5 @@
 import calculator as calculator
 
-def addition(*args):
-    value = 0
-    for i in args:
-        value += i
-    print("Answer: {0}".format(value))
-    
-def subtraction(*args):
-    value = args[0]
-    for i in args[1:]:
-        value -= i
-    print("Answer: {0}".format(value))
-
-def multiplication(*args):
-    value = args[0]
-    for i in args[1:]:
-        value *= i
-    print("Answer: {0}".format(value))
-
-def division(*args):
-    value = args[0]
-    for i in args[1:]:
-        value /= i
-    print("Answer: {0}".format(value))
-
-def modulo(val, mod):
-    print("Answer: {0}".format(val % mod))
-
-def exponent(val, exp):
-    print("Answer: {0}".format(val ** exp))
-
-def root_extration(val, rt):
-    print("Answer: {0}".format(val ** (1 / rt)))
-
 intro_label = """\
 Enter the number of the desired operation:
     1. Addition

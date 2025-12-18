@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk 
 from time import strftime
+import calculator as calculator
 
-def testVal(inStr, acttyp):
-    if acttyp == '1': #insert
-        if not inStr.isdigit():
-            return False
-    return True
+#def testVal(inStr, acttyp):
+#    if acttyp == '1': #insert
+#        if not inStr.isdigit():
+#            return False
+#    return True
 
 def clear_entry():
     print()
@@ -52,7 +53,7 @@ _field.grid(
     padx=20,
     pady=2
 )
-_field['validatecommand'] = (_field.register(testVal),'%P','%d')
+#_field['validatecommand'] = (_field.register(testVal),'%P','%d')
 
 for row in range(1, 7):
     frame.rowconfigure(row, weight = 1)
