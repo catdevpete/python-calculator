@@ -4,7 +4,7 @@
 import ast
 
 class Calculator:
-    current_value = ""
+    current_value = "0"
     cache_value = 0.0
 
     def __init__(self):

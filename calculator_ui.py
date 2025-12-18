@@ -38,12 +38,41 @@ calc_operation = [
     ["=", None]
 ]
 
-#def formatCalcEntry(entry, calculator):
-
 def calc_input(event):
+    num = calc.current_value
+
+    # Handle input
+    if event.keysym == 'BackSpace':
+        num = num[:-1]
+        if (num == ""):
+            num = '0'
+    elif event.keysym == 'period':
+        if '.' not in num:
+            num += '.'
+    elif event.keysym.isdigit():
+        if num == "0" and event.keysym == '0':
+            return
+        num += event.keysym
+
+    # Strip leading zeros
+    if (num != "0" and "." not in num):
+        num = num.lstrip("0")
+
+    # Format string
+    if '.' in num:
+        num_format = num.replace(",", "")
+        dec_split = num_format.split(".")
+        calc.current_value = f"{int(dec_split[0]):,}" + '.'
+        if len(dec_split) == 2:
+            calc.current_value += dec_split[1]
+    else:
+        num_format = num.replace(",", "")
+        calc.current_value = f"{int(num_format):,}"
+
+    # Insert string into entry field, then set back to read-only
     visible_field.config(state="normal")
     visible_field.delete(0, tk.END)
-    visible_field.insert(0, event.keysym)
+    visible_field.insert(0, calc.current_value)
     visible_field.config(state="readonly")
     return
 
@@ -78,12 +107,6 @@ def formatCalcEntry(a, b, c):
     #entry.insert(0,f"{calculator.current_value:,}")
     return
 
-#def testVal(inStr, acttyp):
-#    if acttyp == '1': #insert
-#        if not inStr.isdigit():
-#            return False
-#    return True
-
 def clear_entry():
     print()
 
@@ -113,9 +136,6 @@ style.map("Btn.TLabel", background=[('pressed', '!disabled', '#666'), ('active',
 frame.rowconfigure(0, weight = 1)
 frame.columnconfigure(0, weight = 1)
 
-#entry_field_sv = StringVar()
-#entry_field = ttk.Entry(frame, validate="key", textvariable=entry_field_sv, takefocus=True)
-
 visible_field_sv = StringVar()
 ttk.Label(frame, style="BG.TLabel", justify = tk.RIGHT).grid(
     row=0,
@@ -125,10 +145,9 @@ ttk.Label(frame, style="BG.TLabel", justify = tk.RIGHT).grid(
     padx=2,
     pady=2
 )
-visible_field = ttk.Entry(frame, text="0", style="Ent.TLabel", justify = tk.RIGHT, font=("Helvetica 32 bold"))
+visible_field = ttk.Entry(frame, style="Ent.TLabel", justify = tk.RIGHT, font=("Helvetica 32 bold"))
 #visible_field = ttk.Entry(frame, text="0", style="Ent.TLabel", justify = tk.RIGHT, font=("Helvetica 32 bold"), validate="key", textvariable=visible_field_sv, state='readonly')
-visible_field.insert(0,"ss")
-    #visible_field.insert("insert", END)
+visible_field.insert(0,"0")
 visible_field.grid(
     row=0,
     column=0,
@@ -177,7 +196,7 @@ for row in range(1, 7):
 # Allowing root window to change
 # it's size according to user's need
 
-root.bind("<KeyRelease>", calc_input)
+root.bind("<Key>", calc_input)
 
 root.resizable(True, True)
 
