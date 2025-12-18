@@ -3,6 +3,40 @@ from tkinter import ttk
 from time import strftime
 import calculator as calculator
 
+calc = calculator.Calculator()
+
+calc_operation = [
+    ["%", None],
+    ["CE", None],
+    ["C", None],
+    ["⌫", None],
+
+    ["¹/𝑥", calc.modulo],
+    ["xʸ", calc.exponent],
+    ["ʸ√𝑥", calc.root_extration],
+    ["÷", calc.division],
+    
+    ["7", None],
+    ["8", None],
+    ["9", None],
+    ["×", calc.multiplication],
+    
+    ["4", None],
+    ["5", None],
+    ["6", None],
+    ["-", calc.subtraction],
+    
+    ["1", None],
+    ["2", None],
+    ["3", None],
+    ["+", calc.addition],
+
+    ["⁺∕₋", None],
+    ["0", None],
+    [".", None],
+    ["=", None]
+]
+
 #def testVal(inStr, acttyp):
 #    if acttyp == '1': #insert
 #        if not inStr.isdigit():
@@ -18,6 +52,7 @@ def all_clear():
 root = tk.Tk()
 root.title("Calculator")
 root.configure(background='#1E1E1E')
+root.geometry('450x600')
 
 root.rowconfigure(0, weight = 1)
 root.columnconfigure(0, weight = 1)
@@ -30,8 +65,8 @@ style.theme_use('clam')
 style.configure("TFrame", background="#1E1E1E")
 style.configure("TLabel", padding=6,foreground="#D4D4D4", background="#1E1E1E")
 style.configure("BG.TLabel", padding=6, relief="flat5", foreground="#D4D4D4", background="#1E1E1E")
-style.configure("Ent.TLabel", padding=6, relief="flat5", foreground="#D4D4D4", background="#1E1E1E")
-style.configure("Btn.TLabel", padding=6, relief="flat5", foreground="#D4D4D4", background="#444", anchor = tk.CENTER)
+style.configure("Ent.TLabel", padding=6, relief="flat5", foreground="#D4D4D4", background="#1E1E1E", insertcolor = "#1E1E1E")
+style.configure("Btn.TLabel", padding=6, relief="flat5", foreground="#D4D4D4", background="#444", anchor = tk.CENTER, font=("Helvetica 14"))
 style.map("Btn.TLabel", background=[('pressed', '!disabled', '#666'), ('active', '#4D4D4D')])
 
 frame.rowconfigure(0, weight = 1)
@@ -51,7 +86,7 @@ _field.grid(
     columnspan=4,
     sticky="nsew",
     padx=20,
-    pady=2
+    pady=25
 )
 #_field['validatecommand'] = (_field.register(testVal),'%P','%d')
 
@@ -61,7 +96,8 @@ for row in range(1, 7):
         frame.columnconfigure(col, weight = 1)
         _btn = ttk.Button(
             frame,
-            text=f"Cell ({row}, {col})",
+            #text=f"Cell ({row}, {col})",
+            text=calc_operation[col + (row - 1) * 4][0],
             style="Btn.TLabel"
         ).grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
 

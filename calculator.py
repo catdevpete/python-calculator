@@ -4,8 +4,13 @@
 import ast
 
 class Calculator:
+    cache_value = 0.0
+
     def __init__(self):
         print()
+    
+    def all_clear(self):
+        self.cache_value = 0.0
 
     def addition(self, *args):
         value = 0
@@ -32,10 +37,13 @@ class Calculator:
         return value
 
     def modulo(self, val, mod):
-        return val % mod
+        value = val % mod
+        return value
 
     def exponent(self, val, exp):
-        return val ** exp
+        value = val ** exp
+        return value
 
     def root_extration(self, val, rt):
-        return val ** (1 / rt)
+        value = val ** (1 / rt)
+        return value
