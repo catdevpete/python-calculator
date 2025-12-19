@@ -11,7 +11,7 @@ class Calculator:
         print()
     
     def all_clear(self):
-        self.current_value = 0.0
+        self.current_value = "0"
         self.cache_value = 0.0
 
     def addition(self, *args):
@@ -49,3 +49,7 @@ class Calculator:
     def root_extration(self, val, rt):
         value = val ** (1 / rt)
         return value
+    
+    def perform_operation(self, value, operation):
+        self.cache_value = operation(self.cache_value, value)
+        return self.cache_value

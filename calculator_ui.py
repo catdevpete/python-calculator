@@ -1,59 +1,29 @@
-import re
 import tkinter as tk
-from tkinter import END, INSERT, StringVar, ttk 
-from time import strftime
+from tkinter import END, INSERT, Event, StringVar, ttk
 import calculator as calculator
 
 calc = calculator.Calculator()
+target_operation = None
 
-calc_operation = [
-    ["%", None],
-    ["CE", None],
-    ["C", None],
-    ["⌫", None],
+def process_keypress(event):
+    calc_input(event.keysym)
 
-    ["¹/𝑥", calc.modulo],
-    ["xʸ", calc.exponent],
-    ["ʸ√𝑥", calc.root_extration],
-    ["÷", calc.division],
-    
-    ["7", None],
-    ["8", None],
-    ["9", None],
-    ["×", calc.multiplication],
-    
-    ["4", None],
-    ["5", None],
-    ["6", None],
-    ["-", calc.subtraction],
-    
-    ["1", None],
-    ["2", None],
-    ["3", None],
-    ["+", calc.addition],
-
-    ["⁺∕₋", None],
-    ["0", None],
-    [".", None],
-    ["=", None]
-]
-
-def calc_input(event):
+def calc_input(keysym):
     num = calc.current_value
 
     # Handle input
-    if event.keysym == 'BackSpace':
+    if keysym == 'BackSpace':
         num = num[:-1]
         if (num == ""):
             num = '0'
-    elif event.keysym == 'period':
+    elif keysym == 'period':
         if '.' not in num:
             num += '.'
-    elif event.keysym.isdigit():
-        if num == "0" and event.keysym == '0':
+    elif keysym.isdigit():
+        if num == "0" and keysym == '0':
             return
-        num += event.keysym
-
+        num += keysym
+    
     # Strip leading zeros
     if (num != "0" and "." not in num):
         num = num.lstrip("0")
@@ -76,42 +46,51 @@ def calc_input(event):
     visible_field.config(state="readonly")
     return
 
-def formatCalcEntry(a, b, c):
-    input_decimal = visible_field.get().replace(",", "")
-
-    #try:
-    #    calc.current_value = float(input_decimal)
-    #except ValueError:
-    #    pass
-
-    try:
-        pattern = r"^\d*\.?\d*$"
-        if re.fullmatch(pattern, input_decimal):
-            if (input_decimal == "."):
-                input_decimal = "0."
-            calc.current_value = input_decimal.lstrip("0") if "." not in input_decimal else input_decimal
-    except ValueError:
-        pass
-    
-    if (calc.current_value == ""):
-        visible_field_sv.set("0")
-    else:
-        visible_field_sv.set(calc.current_value)
-
-    #visible_field.insert("insert", END)
-
-    #entry.delete(0,END)
-    #entry.insert(0,"ss")
-    #visible_field_sv.set("ss")
-    #visible_field_sv.set(f"{calc.current_value:,}")
-    #entry.insert(0,f"{calculator.current_value:,}")
-    return
+def set_target_op(operation):
+    target_operation = operation
 
 def clear_entry():
-    print()
+    calc.current_value = "0"
+    visible_field.config(state="normal")
+    visible_field.delete(0, tk.END)
+    visible_field.insert(0, "0")
+    visible_field.config(state="readonly")
 
 def all_clear():
-    print()
+    clear_entry()
+    calc.all_clear()
+
+calc_operation = [
+    ["%", calc.modulo],
+    ["CE", clear_entry],
+    ["C", all_clear],
+    ["⌫", lambda: calc_input('BackSpace')],
+
+    ["¹/𝑥", None],
+    ["xʸ", lambda: set_target_op(calc.exponent)],
+    ["ʸ√𝑥", lambda: set_target_op(calc.root_extration)],
+    ["÷", lambda: set_target_op(calc.division)],
+    
+    ["7", lambda: calc_input('7')],
+    ["8", lambda: calc_input('8')],
+    ["9", lambda: calc_input('9')],
+    ["×", lambda: set_target_op(calc.multiplication)],
+    
+    ["4", lambda: calc_input('4')],
+    ["5", lambda: calc_input('5')],
+    ["6", lambda: calc_input('6')],
+    ["-", lambda: set_target_op(calc.subtraction)],
+    
+    ["1", lambda: calc_input('1')],
+    ["2", lambda: calc_input('2')],
+    ["3", lambda: calc_input('3')],
+    ["+", lambda: set_target_op(calc.addition)],
+
+    ["⁺∕₋", None],
+    ["0", lambda: calc_input('0')],
+    [".", lambda: calc_input('period')],
+    ["=", None]
+]
 
 root = tk.Tk()
 root.title("Calculator")
@@ -146,7 +125,6 @@ ttk.Label(frame, style="BG.TLabel", justify = tk.RIGHT).grid(
     pady=2
 )
 visible_field = ttk.Entry(frame, style="Ent.TLabel", justify = tk.RIGHT, font=("Helvetica 32 bold"))
-#visible_field = ttk.Entry(frame, text="0", style="Ent.TLabel", justify = tk.RIGHT, font=("Helvetica 32 bold"), validate="key", textvariable=visible_field_sv, state='readonly')
 visible_field.insert(0,"0")
 visible_field.grid(
     row=0,
@@ -158,45 +136,20 @@ visible_field.grid(
 )
 visible_field.config(state='readonly')
 
-#visible_field_sv.trace("w", formatCalcEntry)
-
-#visible_field_sv.trace("w", lambda visible_field, calc, visible_field_sv=visible_field_sv:formatCalcEntry(visible_field, calc))
-#visible_field['validatecommand'] = (visible_field.register(testVal),'%P','%d')
-
 visible_field.focus_set()
 
 for row in range(1, 7):
     frame.rowconfigure(row, weight = 1)
     for col in range(4):
         frame.columnconfigure(col, weight = 1)
-        _btn = ttk.Button(
+        ttk.Button(
             frame,
-            #text=f"Cell ({row}, {col})",
             text=calc_operation[col + (row - 1) * 4][0],
-            style="Btn.TLabel"
+            style="Btn.TLabel",
+            command=calc_operation[col + (row - 1) * 4][1]
         ).grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
 
-#Button(root, text="Span 2 columns", style="Btn.TLabel").grid(
-#    row=3,
-#    column=0,
-#    columnspan=2,
-#    sticky="ew",
-#)
-#Button(root, text="Span 2 rows", style="Btn.TLabel").grid(
-#    row=4,
-#    column=0,
-#    rowspan=2,
-#    sticky="ns",
-#)
-
-#root.geometry('250x100')
-
-#Label(root, text = 'It\'s resizable').pack(side = tk.TOP, pady = 10)
-
-# Allowing root window to change
-# it's size according to user's need
-
-root.bind("<Key>", calc_input)
+root.bind("<Key>", process_keypress)
 
 root.resizable(True, True)
 
