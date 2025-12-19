@@ -4,14 +4,12 @@
 import ast
 
 class Calculator:
-    current_value = "0"
     cache_value = 0.0
 
     def __init__(self):
         print()
     
     def all_clear(self):
-        self.current_value = "0"
         self.cache_value = 0.0
 
     def addition(self, *args):
