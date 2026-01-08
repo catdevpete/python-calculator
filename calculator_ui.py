@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import END, INSERT, Event, StringVar, ttk
-import calculator as calculator
+import calculator
 import calc_icon as ico
 import os
 
